@@ -1,0 +1,120 @@
+# Basic Settings
+set hidden true
+set ignorecase true
+set icons true
+set shell zsh
+set shellopts '-eu'
+# set previewer ~/.config/lf/pv
+# set cleaner ~/.config/lf/cls
+
+# Custom Functions
+
+cmd mkdir ${{
+  printf "Directory Name: "
+  read ans
+  mkdir $ans
+}}
+
+cmd mkfile ${{
+  printf "File Name: "
+  read ans
+  $EDITOR $ans
+}}
+
+cmd chmod ${{
+  printf "Mod flags: "
+  read ans
+  for file in "$fx"
+  do 
+    chmod $ans $file
+  done
+}}
+
+# cmd setwallpaper %cp "$f" ~/.config/wall.jpg && xwallpaper --zoom "$f"
+
+# Archive bindings
+cmd unarchive ${{
+  case "$f" in
+      *.zip) unzip "$f" ;;
+      *.tar.gz) tar -xzvf "$f" ;;
+      *.tar.bz2) tar -xjvf "$f" ;;
+      *.tar) tar -xvf "$f" ;;
+      *) echo "Unsupported format" ;;
+  esac
+}}
+
+cmd fzf_jump ${{
+    res="$(find . -maxdepth 3 | fzf --reverse --header='Jump to location' | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    if [ -d "$res" ] ; then
+        cmd="cd"
+    elif [ -f "$res" ] ; then
+        cmd="select"
+    else
+        exit 0
+    fi
+    lf -remote "send $id $cmd \"$res\""
+}}
+
+# trash commands
+cmd trash ${{
+  for file in "$fx"
+  do  
+    trash-put "$file"
+  done 
+}}
+
+cmd trash_clear %trash-empty
+
+cmd trash_restore ${{
+  trash-restore
+}}
+
+# Execute exe
+# cmd execute ${{
+# 	wine "$f"
+# }}
+
+# Bindings
+# Remove some defaults
+map m
+map o
+map n
+map "'"
+map '"'
+map d
+map t
+
+map E $$EDITOR "$f"
+
+map au unarchive
+# map ae execute
+
+# Basic Functions
+map . set hidden!
+map p paste
+map x cut
+map y copy
+map <enter> open
+map R reload
+map mf mkfile
+map md mkdir
+map mh chmod
+# map bg setwallpaper
+map C clear
+map f fzf_jump
+
+map dd trash
+map tc trash_clear
+map tr trash_restore
+
+# Movement
+map gd cd ~/downloads
+map gp cd ~/pic
+map gc cd ~/.config
+map gw cd ~/work/projects
+map gn cd ~/work/note
+map gm cd /run/media/trim
+
+
+# map g\; cd ~
+
